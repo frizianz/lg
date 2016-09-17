@@ -76,9 +76,9 @@ my %valid_query = (
 			"trace"			=>	"traceroute %s"
 			},
 		"ipv6"		=>	{
-			"bgp"			=>	"show bgp ipv6 %s",
-			"advertised-routes"	=>	"show bgp ipv6 neighbors %s advertised-routes",
-			"summary"		=>	"show bgp ipv6 summary",
+			"bgp"			=>	"show bgp ipv6 unicast %s",
+			"advertised-routes"	=>	"show bgp ipv6 unicast neighbors %s advertised-routes",
+			"summary"		=>	"show bgp ipv6 unicast summary",
 			"ping"			=>	"ping ipv6 %s",
 			"trace"			=>	"traceroute ipv6 %s"
 			}
@@ -438,14 +438,17 @@ sub xml_startparse {
 				if (lc($attrval[$i]) eq "name") {
 					$xml_current_router_name = $attrval[$i+1];
 					$ostypes{$xml_current_router_name} = lc($default_ostype);
-					$ipv4enabled ++;
 				} elsif (lc($attrval[$i]) eq "default") {
 					if (lc($attrval[$i+1]) eq "yes") {
 						$default_router = $xml_current_router_name;
 					}
+				} elsif (lc($attrval[$i]) eq "enableipv4") {
+					if (lc($attrval[$i+1]) eq "yes") {
+						$ipv4enabled++;
+					}
+	
 				} elsif (lc($attrval[$i]) eq "enableipv6") {
 					if (lc($attrval[$i+1]) eq "yes") {
-						$ipv4enabled--;
 						$ipv6enabled++;
 					}
 				} elsif (lc($attrval[$i]) eq "ostype") {
