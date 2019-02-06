@@ -70,15 +70,15 @@ my %valid_query = (
 	"ios"		=>	{
 		"ipv4"			=>	{
 			"bgp"			=>	"show ip bgp %s",
-			"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
-			"summary"		=>	"show ip bgp summary",
+			#"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
+			#"summary"		=>	"show ip bgp summary",
 			"ping"			=>	"ping %s",
 			"trace"			=>	"traceroute %s"
 			},
 		"ipv6"		=>	{
 			"bgp"			=>	"show bgp ipv6 unicast %s",
-			"advertised-routes"	=>	"show bgp ipv6 unicast neighbors %s advertised-routes",
-			"summary"		=>	"show bgp ipv6 unicast summary",
+			#"advertised-routes"	=>	"show bgp ipv6 unicast neighbors %s advertised-routes",
+			#"summary"		=>	"show bgp ipv6 unicast summary",
 			"ping"			=>	"ping ipv6 %s",
 			"trace"			=>	"traceroute ipv6 %s"
 			}
@@ -86,15 +86,15 @@ my %valid_query = (
         "iosxr"         =>      {
                 "ipv4"                  =>      {
                         "bgp"                   =>      "show bgp ipv4 unicast %s",
-                        "advertised-routes"     =>      "show bgp ipv4 unicast neighbors %s advertised-routes",
-                        "summary"               =>      "show bgp ipv4 unicast summary",
+                        #"advertised-routes"     =>      "show bgp ipv4 unicast neighbors %s advertised-routes",
+                        #"summary"               =>      "show bgp ipv4 unicast summary",
                         "ping"                  =>      "ping %s",
                         "trace"                 =>      "traceroute %s"
                         },
                 "ipv6"          =>      {
                         "bgp"                   =>      "show bgp ipv6 unicast %s",
-                        "advertised-routes"     =>      "show bgp ipv6 unicast neighbors %s advertised-routes",
-                        "summary"               =>      "show bgp ipv6 unicast summary",
+                        #"advertised-routes"     =>      "show bgp ipv6 unicast neighbors %s advertised-routes",
+                        #"summary"               =>      "show bgp ipv6 unicast summary",
                         "ping"                  =>      "ping ipv6 %s",
                         "trace"                 =>      "traceroute ipv6 %s"
                         }
@@ -102,15 +102,15 @@ my %valid_query = (
 	"zebra"		=>	{
 		"ipv4"			=>	{
 			"bgp"			=>	"show ip bgp %s",
-			"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
-			"summary"		=>	"show ip bgp summary",
+			#"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
+			#"summary"		=>	"show ip bgp summary",
 			"ping"			=>	"ping %s",
 			"trace"			=>	"traceroute %s"
 			},
 		"ipv6"		=>	{
 			"bgp"			=>	"show bgp ipv6 %s",
-			"advertised-routes"	=>	"show bgp ipv6 neighbors %s advertised-routes",
-			"summary"		=>	"show bgp ipv6 summary",
+			#"advertised-routes"	=>	"show bgp ipv6 neighbors %s advertised-routes",
+			#"summary"		=>	"show bgp ipv6 summary",
 			"ping"			=>	"ping ipv6 %s",
 			"trace"			=>	"traceroute ipv6 %s"
 			}
@@ -124,23 +124,23 @@ my %valid_query = (
 			},
 		"ipv46"			=>	{
 			"bgp"			=>	"show bgp %s",
-			"advertised-routes"	=>	"show route advertising-protocol bgp %s %s",
-			"summary"		=>	"show bgp summary",
+			#"advertised-routes"	=>	"show route advertising-protocol bgp %s %s",
+			#"summary"		=>	"show bgp summary",
 			"ping"			=>	"ping count 5 %s"
 			}
 		},
 	"vyatta"		=>	{
 		"ipv4"			=>	{
 			"bgp"			=>	"show ip bgp %s",
-			"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
-			"summary"		=>	"show ip bgp summary",
+			#"advertised-routes"	=>	"show ip bgp neighbors %s advertised-routes",
+			#"summary"		=>	"show ip bgp summary",
 			"ping"			=>	"ping %s",
 			"trace"			=>	"traceroute %s"
 			}
 		},
 	"routeros"	=>	{
 		"ipv46"	=>	{
-			"advertised-routes"	=>	"/routing bgp advertisements print where peer=\"%s\" && prefix=\"%s\"",
+			#"advertised-routes"	=>	"/routing bgp advertisements print where peer=\"%s\" && prefix=\"%s\"",
 			"ping"	=>	"/tool ping \"%s\" count=5",
 			"trace"	=>	"/tool traceroute \"%s\""
 			}
@@ -306,20 +306,20 @@ if ($ostypes{$FORM{router}} eq "junos") {
 		$command = "show route advertising-protocol bgp $1 $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+\/\d+)$/) {
 		# show bgp <IP>/mask ---> show route protocol bgp <IP> all
-		$command = "show route protocol bgp $1 terse exact all $table";
+		$command = "show route $1 exact all $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+)$/) {
 		# show bgp <IP> ---> show route protocol bgp <IP> all
-		$command = "show route protocol bgp $1 terse $table";
+		$command = "show route $1 $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:\/]+) exact$/) {
 		# show bgp <IP> exact ---> show route protocol bgp <IP> exact detail all
-		$command = "show route protocol bgp $1 exact detail all $table";
+		$command = "show route $1 exact detail all $table";
 	} elsif ($command =~ /^show bgp re\w*\s+(.*)$/) {
 		# show ip bgp re <regexp> ---> show route aspath-regex <regexp> all
 		my $re = $1;
 		$re = ".*${re}" if ($re !~ /^\^/);
 		$re = "${re}.*" if ($re !~ /\$$/);
 		$re =~ s/_/ /g;
-		$command = "show route protocol bgp aspath-regex \"$re\" all $table terse";
+		$command = "show route protocol bgp aspath-regex \"$re\" all $table";
 	}
 }
 
@@ -574,11 +574,9 @@ sub print_form {
 <TH BGCOLOR="#000000" NOWRAP><FONT COLOR="#FFFFFF">Node</FONT></TH></TR>
 <TR><TD>
 <TABLE BORDER=0 CELLPADDING=2 CELLSPACING=2>
-<TR><TD><INPUT TYPE=radio NAME=query VALUE=bgp></TD><TD>&nbsp;bgp</TD></TR>
-<TR><TD><INPUT TYPE=radio NAME=query VALUE=advertised-routes></TD><TD>&nbsp;bgp&nbsp;advertised-routes</TD></TR>
-<TR><TD><INPUT TYPE=radio NAME=query VALUE=summary></TD><TD>&nbsp;bgp&nbsp;summary</TD></TR>
+<TR><TD><INPUT TYPE=radio NAME=query VALUE=bgp CHECKED></TD><TD>&nbsp;bgp</TD></TR>
 <TR><TD><INPUT TYPE=radio NAME=query VALUE=ping></TD><TD>&nbsp;ping</TD></TR>
-<TR><TD><INPUT TYPE=radio NAME=query VALUE=trace CHECKED></TD><TD>&nbsp;trace</TD></TR>
+<TR><TD><INPUT TYPE=radio NAME=query VALUE=trace></TD><TD>&nbsp;trace</TD></TR>
 EOT
 	if ($ipv4enabled && $ipv6enabled) {
 		print <<EOT;
