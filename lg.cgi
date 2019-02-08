@@ -288,7 +288,7 @@ if ($ostypes{$FORM{router}} eq "junos") {
 		$command = "show route protocol bgp $1 exact all $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+)$/) {
 		# show bgp <IP> ---> show route protocol bgp <IP> all
-		$command = "show route $1 $table";
+		$command = "show route protocol bgp $1 $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:\/]+) exact$/) {
 		# show bgp <IP> exact ---> show route protocol bgp <IP> exact detail all
 		$command = "show route protocol bgp $1 exact detail all $table";
