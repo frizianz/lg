@@ -283,36 +283,15 @@ $table = "table inet.0" if ($FORM{protocol} eq "IPv4");
 $table = "table inet6.0" if ($FORM{protocol} eq "IPv6");
 
 if ($ostypes{$FORM{router}} eq "junos") {
-	if ($command =~ /^show bgp n\w*\s+([\d\.A-Fa-f:]+)$/) {
-		# show bgp n.. <IP> ---> show bgp neighbor <IP>
-		$command = "show bgp neighbor $1";
-	} elsif ($command =~ /^show bgp n\w*\s+([\d\.A-Fa-f:]+) ro\w*$/) {
-		# show bgp n.. <IP> ro.. ---> show route receive-protocol bgp <IP>
-		$command = "show route receive-protocol bgp $1 $table";
-	} elsif ($command =~ /^show bgp neighbors ([\d\.A-Fa-f:]+) routes all$/) {
-		# show bgp neighbors <IP> routes all ---> show route receive-protocol bgp <IP> all
-		$command = "show route receive-protocol bgp $1 all $table";
-	} elsif ($command =~ /^show bgp neighbors ([\d\.A-Fa-f:]+) routes damping suppressed$/) {
-		# show bgp neighbors <IP> routes damping suppressed ---> show route receive-protocol bgp <IP> damping suppressed
-		$command = "show route receive-protocol bgp $1 damping suppressed $table";
-	} elsif ($command =~ /^show bgp n\w*\s+([\d\.A-Fa-f:]+) advertised-routes ([\d\.A-Fa-f:\/]+)$/) {
-		# show ip bgp n.. <IP> advertised-routes <prefix> ---> show route advertising-protocol bgp <IP> <prefix> exact detail
-		$command = "show route advertising-protocol bgp $1 $2 exact detail $table";
-	} elsif ($command =~ /^show bgp n\w*\s+([\d\.A-Fa-f:]+) receive-protocol ([\d\.A-Fa-f:\/]+)$/) {
-		# show ip bgp n.. <IP> receive-protocol <prefix> ---> show route receive-protocol bgp <IP> <prefix> exact detail
-		$command = "show route receive-protocol bgp $1 $2 exact detail $table";
-	} elsif ($command =~ /^show bgp n\w*\s+([\d\.A-Fa-f:]+) a[\w\-]*$/) {
-		# show ip bgp n.. <IP> a.. ---> show route advertising-protocol bgp <IP>
-		$command = "show route advertising-protocol bgp $1 $table";
-	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+\/\d+)$/) {
+	if ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+\/\d+)$/) {
 		# show bgp <IP>/mask ---> show route protocol bgp <IP> all
-		$command = "show route $1 exact all $table";
+		$command = "show route protocol bgp $1 exact all $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:]+)$/) {
 		# show bgp <IP> ---> show route protocol bgp <IP> all
 		$command = "show route $1 $table";
 	} elsif ($command =~ /^show bgp\s+([\d\.A-Fa-f:\/]+) exact$/) {
 		# show bgp <IP> exact ---> show route protocol bgp <IP> exact detail all
-		$command = "show route $1 exact detail all $table";
+		$command = "show route protocol bgp $1 exact detail all $table";
 	} elsif ($command =~ /^show bgp re\w*\s+(.*)$/) {
 		# show ip bgp re <regexp> ---> show route aspath-regex <regexp> all
 		my $re = $1;
